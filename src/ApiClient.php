@@ -5,7 +5,7 @@
  * @author Timur Kasumov aka XAKEPEHOK
  */
 
-namespace Leadvertex\Plugin\ApiClient;
+namespace Leadvertex\Plugin\Components\ApiClient;
 
 
 use Softonic\GraphQL\Client;

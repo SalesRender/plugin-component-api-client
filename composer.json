@@ -1,5 +1,5 @@
 {
-  "name": "leadvertex/plugin-api-client",
+  "name": "leadvertex/plugin-component-api-client",
   "description": "LeadVertex plugin API client component",
   "type": "library",
   "minimum-stability": "stable",
@@ -12,7 +12,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Leadvertex\\Plugin\\ApiClient\\": "src/"
+      "Leadvertex\\Plugin\\Components\\ApiClient\\": "src/"
     }
   },
   "require": {
