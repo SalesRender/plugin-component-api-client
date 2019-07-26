@@ -1,0 +1,22 @@
+{
+  "name": "leadvertex/plugin-api-client",
+  "description": "LeadVertex plugin API client component",
+  "type": "library",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Timur Kasumov aka XAKEPEHOK",
+      "email": "support@leadvertex.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Leadvertex\\Plugin\\ApiClient\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.1.0",
+    "softonic/graphql-client": "^1.2"
+  }
+}
