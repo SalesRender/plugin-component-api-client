@@ -16,7 +16,7 @@ class ApiFilterSortPaginate
      */
     private $filter;
     /**
-     * @var string|null
+     * @var ApiSort|null
      */
     private $sort;
     /**
@@ -24,7 +24,7 @@ class ApiFilterSortPaginate
      */
     private $pageSize;
 
-    public function __construct(?array $filter, ?string $sort, ?int $pageSize)
+    public function __construct(?array $filter, ?ApiSort $sort, ?int $pageSize)
     {
         $this->filter = $filter;
         $this->pageSize = $pageSize;
@@ -48,9 +48,9 @@ class ApiFilterSortPaginate
     }
 
     /**
-     * @return string|null
+     * @return ApiSort|null
      */
-    public function getSort(): ?string
+    public function getSort(): ?ApiSort
     {
         return $this->sort;
     }
