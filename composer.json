@@ -18,6 +18,7 @@
   "require": {
     "php": ">=7.1.0",
     "softonic/graphql-client": "^1.2",
-    "leadvertex/plugin-component-process": "^0.1.0"
+    "leadvertex/plugin-component-process": "^0.1.0",
+    "adbario/php-dot-notation": "^2.2"
   }
 }

@@ -8,6 +8,7 @@
 namespace Leadvertex\Plugin\Components\ApiClient;
 
 
+use Adbar\Dot;
 use GuzzleHttp\Exception\GuzzleException;
 use Leadvertex\Plugin\Components\Process\Components\Error;
 use Leadvertex\Plugin\Components\Process\Components\Handled;
@@ -17,7 +18,7 @@ use Leadvertex\Plugin\Components\Process\Exceptions\AlreadyInitializedException;
 use Leadvertex\Plugin\Components\Process\Exceptions\NotInitializedException;
 use Leadvertex\Plugin\Components\Process\Process;
 
-abstract class ApiFetcher
+abstract class ApiFetcherIterator
 {
 
     /**
@@ -42,6 +43,12 @@ abstract class ApiFetcher
 
     abstract protected function getQuery(array $body): string;
 
+    /**
+     * Dot-notation string to query body
+     * @return string
+     */
+    abstract protected function getQueryPath(): string;
+
     abstract protected function getIdentity(array $array): string;
 
     /**
@@ -57,13 +64,14 @@ abstract class ApiFetcher
         $pageNumber = 1;
         $ids = [];
         $query = $this->getQuery($fields);
-
         do {
             $handled = 0;
             $skipped = 0;
             $errors = [];
 
-            $items = $this->client->query($query, $this->getVariables($pageNumber));
+            $variables = $this->getVariables($pageNumber);
+            $response = new Dot($this->client->query($query, $variables)->getData());
+            $items = $response->get($this->getQueryPath() . "." . key($fields));
             foreach ($items as $item) {
 
                 //Prevent multiple handling
@@ -90,6 +98,7 @@ abstract class ApiFetcher
             $this->process->skipWebhook(new Skipped($skipped));
             $this->process->errorWebhook($errors);
 
+            $pageNumber++;
         } while (!empty($items));
 
         //Calc skipped items
@@ -106,10 +115,11 @@ abstract class ApiFetcher
         $query = $this->getQuery(['pageInfo' => ['itemsCount']]);
         $variables = $this->getVariables(1);
 
-        $pageInfo = $this->client->query($query, $variables)->getData();
-        $this->process->initWebhook(new Init($pageInfo['itemsCount']));
+        $response = new Dot($this->client->query($query, $variables)->getData());
+        $itemsCount = $response->get("{$this->getQueryPath()}.pageInfo.itemsCount");
+        $this->process->initWebhook(new Init($itemsCount));
 
-        return $pageInfo['itemsCount'];
+        return $itemsCount;
     }
 
     /**
