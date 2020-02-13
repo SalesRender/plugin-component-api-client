@@ -8,7 +8,7 @@
 namespace Leadvertex\Plugin\Components\ApiClient;
 
 
-use InvalidArgumentException;
+use Leadvertex\Plugin\Components\Guzzle\Guzzle;
 use Softonic\GraphQL\Client;
 use Softonic\GraphQL\ClientBuilder;
 use Softonic\GraphQL\Response;
@@ -31,17 +31,14 @@ class ApiClient
     public function __construct(string $endpoint, string $token)
     {
         $this->endpoint = $endpoint;
-
-        if (!filter_var($endpoint, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException("Invalid GraphQL endpoint url '{$endpoint}'");
-        }
-
         $this->token = $token;
+        $guzzle = Guzzle::getInstance();
+
+        $headers = $guzzle->getConfig('headers');
         $this->client = ClientBuilder::build($endpoint, [
-            'headers' => [
-                'User-Agent' => 'lv-plugin-api-client',
+            'headers' => array_merge($headers, [
                 'Authorization' => "Bearer {$token}",
-            ],
+            ]),
         ]);
     }
 

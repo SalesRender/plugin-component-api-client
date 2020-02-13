@@ -9,13 +9,6 @@ namespace Leadvertex\Plugin\Components\ApiClient;
 
 
 use Adbar\Dot;
-use GuzzleHttp\Exception\GuzzleException;
-use Leadvertex\Plugin\Components\Process\Components\Error;
-use Leadvertex\Plugin\Components\Process\Components\Handled;
-use Leadvertex\Plugin\Components\Process\Components\Init;
-use Leadvertex\Plugin\Components\Process\Components\Skipped;
-use Leadvertex\Plugin\Components\Process\Exceptions\AlreadyInitializedException;
-use Leadvertex\Plugin\Components\Process\Exceptions\NotInitializedException;
 use Leadvertex\Plugin\Components\Process\Process;
 
 abstract class ApiFetcherIterator
@@ -54,21 +47,14 @@ abstract class ApiFetcherIterator
     /**
      * @param array $fields
      * @param callable $handler
-     * @throws GuzzleException
-     * @throws AlreadyInitializedException
-     * @throws NotInitializedException
      */
     public function iterator(array $fields, callable $handler)
     {
-        $itemsCount = $this->init();
+        $this->init();
         $pageNumber = 1;
         $ids = [];
         $query = $this->getQuery($fields);
         do {
-            $handled = 0;
-            $skipped = 0;
-            $errors = [];
-
             $variables = $this->getVariables($pageNumber);
             $response = new Dot($this->client->query($query, $variables)->getData());
             $items = $response->get($this->getQueryPath() . "." . key($fields));
@@ -77,38 +63,21 @@ abstract class ApiFetcherIterator
                 //Prevent multiple handling
                 $identity = $this->getIdentity($item);
                 if (isset($ids[$identity])) {
-                    $skipped++;
                     continue;
                 }
                 $ids[$identity] = true;
 
-                //Check handling result
-                $result = $handler($item);
-                if ($result instanceof Handled) {
-                    $handled+= $result->getCount();
-                } elseif ($result instanceof Skipped) {
-                    $skipped+= $result->getCount();
-                } elseif ($result instanceof Error) {
-                    $errors[] = $result;
-                }
+                $handler($item, $this->process);
             }
 
-            //Send webhooks
-            $this->process->handleWebhook(new Handled($handled));
-            $this->process->skipWebhook(new Skipped($skipped));
-            $this->process->errorWebhook($errors);
+            $this->process->save();
 
             $pageNumber++;
         } while (!empty($items));
-
-        //Calc skipped items
-        $this->process->skipWebhook(new Skipped($itemsCount - count($ids)));
     }
 
     /**
      * @return int
-     * @throws GuzzleException
-     * @throws AlreadyInitializedException
      */
     private function init(): int
     {
@@ -117,7 +86,7 @@ abstract class ApiFetcherIterator
 
         $response = new Dot($this->client->query($query, $variables)->getData());
         $itemsCount = $response->get("{$this->getQueryPath()}.pageInfo.itemsCount");
-        $this->process->initWebhook(new Init($itemsCount));
+        $this->process->initialize($itemsCount);
 
         return $itemsCount;
     }
