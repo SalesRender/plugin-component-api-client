@@ -19,7 +19,7 @@
     "php": ">=7.1.0",
     "leadvertex/plugin-component-process": "^0.3.0",
     "leadvertex/plugin-component-handshake": "^0.1.0",
-    "leadvertex/plugin-component-guzzle": "^0.0.1",
+    "leadvertex/plugin-component-guzzle": "^0.1",
     "softonic/graphql-client": "^1.2",
     "adbario/php-dot-notation": "^2.2"
   },
