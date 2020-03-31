@@ -48,7 +48,7 @@ abstract class ApiFetcherIterator
      * @param array $fields
      * @param callable $handler
      */
-    public function iterator(array $fields, callable $handler)
+    public function iterator(array $fields, callable $handler): void
     {
         $this->init();
         $pageNumber = 1;
