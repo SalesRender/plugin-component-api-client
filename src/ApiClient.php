@@ -37,7 +37,7 @@ class ApiClient
         $headers = $guzzle->getConfig('headers');
         $this->client = ClientBuilder::build($endpoint, [
             'headers' => array_merge($headers, [
-                'Authorization' => "Bearer {$token}",
+                'Authorization' => $token,
             ]),
         ]);
     }
