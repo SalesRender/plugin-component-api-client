@@ -11,18 +11,11 @@ namespace Leadvertex\Plugin\Components\ApiClient;
 class ApiFilterSortPaginate
 {
 
-    /**
-     * @var array|null
-     */
-    private $filters;
-    /**
-     * @var ApiSort|null
-     */
-    private $sort;
-    /**
-     * @var int|null
-     */
-    private $pageSize;
+    private ?array $filters;
+
+    private ?ApiSort $sort;
+
+    private ?int $pageSize;
 
     public function __construct(?array $filters, ?ApiSort $sort, ?int $pageSize)
     {
@@ -31,25 +24,16 @@ class ApiFilterSortPaginate
         $this->sort = $sort;
     }
 
-    /**
-     * @return array|null
-     */
     public function getFilters(): ?array
     {
         return $this->filters;
     }
 
-    /**
-     * @return int|null
-     */
     public function getPageSize(): ?int
     {
         return $this->pageSize;
     }
 
-    /**
-     * @return ApiSort|null
-     */
     public function getSort(): ?ApiSort
     {
         return $this->sort;

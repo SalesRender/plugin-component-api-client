@@ -14,18 +14,11 @@ use Leadvertex\Plugin\Components\Process\Process;
 abstract class ApiFetcherIterator
 {
 
-    /**
-     * @var ApiClient
-     */
-    private $client;
-    /**
-     * @var ApiFilterSortPaginate
-     */
-    private $fsp;
-    /**
-     * @var Process
-     */
-    private $process;
+    private ApiClient $client;
+
+    private ApiFilterSortPaginate $fsp;
+
+    private Process $process;
 
     public function __construct(Process $process, ApiClient $client, ApiFilterSortPaginate $fsp)
     {
@@ -44,10 +37,6 @@ abstract class ApiFetcherIterator
 
     abstract protected function getIdentity(array $array): string;
 
-    /**
-     * @param array $fields
-     * @param callable $handler
-     */
     public function iterator(array $fields, callable $handler): void
     {
         $this->init();
@@ -76,9 +65,6 @@ abstract class ApiFetcherIterator
         } while (!empty($items));
     }
 
-    /**
-     * @return int
-     */
     private function init(): int
     {
         $query = $this->getQuery(['pageInfo' => ['itemsCount']]);
@@ -91,10 +77,6 @@ abstract class ApiFetcherIterator
         return $itemsCount;
     }
 
-    /**
-     * @param int $pageNumber
-     * @return array
-     */
     private function getVariables(int $pageNumber): array
     {
         $fsp = [

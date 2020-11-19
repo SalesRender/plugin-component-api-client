@@ -16,14 +16,9 @@ class ApiSort
     const ASC = 'ASC';
     const DESC = 'DESC';
 
-    /**
-     * @var string
-     */
-    private $field;
-    /**
-     * @var string
-     */
-    private $direction;
+    private string $field;
+
+    private string $direction;
 
     public function __construct(string $field, string $direction)
     {
@@ -35,17 +30,11 @@ class ApiSort
         }
     }
 
-    /**
-     * @return string
-     */
     public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * @return string
-     */
     public function getDirection(): string
     {
         return $this->direction;

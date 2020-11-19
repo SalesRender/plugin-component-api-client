@@ -15,18 +15,12 @@ use Softonic\GraphQL\Response;
 
 class ApiClient
 {
-    /**
-     * @var string
-     */
-    private $endpoint;
-    /**
-     * @var string
-     */
-    private $token;
-    /**
-     * @var Client
-     */
-    private $client;
+
+    private string $endpoint;
+
+    private string $token;
+
+    private Client $client;
 
     public function __construct(string $endpoint, string $token)
     {
@@ -42,9 +36,6 @@ class ApiClient
         ]);
     }
 
-    /**
-     * @return Client
-     */
     public function getClient(): Client
     {
         return $this->client;
