@@ -17,6 +17,8 @@ class ApiFilterSortPaginate
 
     private ?int $pageSize;
 
+    private int $pageNumber = 1;
+
     public function __construct(?array $filters, ?ApiSort $sort, ?int $pageSize)
     {
         $this->filters = $filters;
@@ -29,14 +31,29 @@ class ApiFilterSortPaginate
         return $this->filters;
     }
 
+    public function getSort(): ?ApiSort
+    {
+        return $this->sort;
+    }
+
     public function getPageSize(): ?int
     {
         return $this->pageSize;
     }
 
-    public function getSort(): ?ApiSort
+    public function getPageNumber(): int
     {
-        return $this->sort;
+        return $this->pageNumber;
+    }
+
+    public function setPageNumber(int $pageNumber): void
+    {
+        $this->pageNumber = $pageNumber;
+    }
+
+    public function incPageNumber(): void
+    {
+        $this->pageNumber++;
     }
 
 

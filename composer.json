@@ -17,12 +17,9 @@
   },
   "require": {
     "php": ">=7.4.0",
-    "leadvertex/plugin-component-process": "^0.4.0",
     "leadvertex/plugin-component-guzzle": "^0.3",
     "softonic/graphql-client": "^1.2",
-    "adbario/php-dot-notation": "^2.2"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "8"
+    "adbario/php-dot-notation": "^2.2",
+    "xakepehok/array-graphql": "^0.0.1"
   }
 }
