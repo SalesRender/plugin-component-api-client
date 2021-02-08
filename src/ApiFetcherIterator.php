@@ -37,7 +37,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     private int $_count;
 
-    private int $_query;
+    private string $_query;
 
     /**
      * ApiFetcherIterator constructor.
