@@ -29,6 +29,8 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     private bool $preventPaginationOverlay;
 
+    private ?int $limit;
+
     private array $identities = [];
 
     private array $currentArray = [];
@@ -39,19 +41,23 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     private string $_query;
 
+    private int $iterations = 0;
+
     /**
      * ApiFetcherIterator constructor.
-     * @param array $fields, e.g. ['orders' => ['id', 'status' => ['id']]], @see https://github.com/XAKEPEHOK/ArrayGraphQL
+     * @param array $fields , e.g. ['orders' => ['id', 'status' => ['id']]], @see https://github.com/XAKEPEHOK/ArrayGraphQL
      * @param ApiClient $client
      * @param ApiFilterSortPaginate $fsp
      * @param bool $preventPaginationOverlay
+     * @param int|null $limit
      */
-    public function __construct(array $fields, ApiClient $client, ApiFilterSortPaginate $fsp, bool $preventPaginationOverlay = true)
+    public function __construct(array $fields, ApiClient $client, ApiFilterSortPaginate $fsp, bool $preventPaginationOverlay = true, int $limit = null)
     {
         $this->fields = $fields;
         $this->client = $client;
         $this->fsp = $fsp;
         $this->preventPaginationOverlay = $preventPaginationOverlay;
+        $this->limit = $limit;
         $this->onBeforeBatch = function () {};
         $this->onAfterBatch = function () {};
     }
@@ -93,9 +99,12 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
             $response = new Dot($this->client->query($query, $variables)->getData());
             $this->_count = (int) $response->get("{$this->getQueryPath()}.pageInfo.itemsCount");
+            if (is_null($this->limit)) {
+                $this->limit = $this->_count;
+            }
         }
 
-        return $this->_count;
+        return min($this->_count, $this->limit);
     }
 
     public function current()
@@ -122,11 +131,20 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     public function valid(): bool
     {
-        return isset($this->currentArray[$this->currentKey]);
+        if ($isValid = isset($this->currentArray[$this->currentKey])) {
+            $this->iterations++;
+        }
+
+        if ($this->limit && $this->iterations >= $this->limit) {
+            return false;
+        }
+
+        return $isValid;
     }
 
     public function rewind(): void
     {
+        $this->iterations = 0;
         $this->fsp->setPageNumber(1);
         $this->identities = [];
         ($this->onBeforeBatch)();
