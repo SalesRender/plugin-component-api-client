@@ -29,7 +29,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     private bool $preventPaginationOverlay;
 
-    private ?int $limit;
+    private ?int $limit = null;
 
     private array $identities = [];
 
@@ -135,7 +135,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
             $this->iterations++;
         }
 
-        if ($this->limit && $this->iterations >= $this->limit) {
+        if ($this->limit > 0 && $this->iterations > $this->limit) {
             return false;
         }
 
