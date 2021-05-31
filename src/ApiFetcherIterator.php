@@ -57,7 +57,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
         $this->client = $client;
         $this->fsp = $fsp;
         $this->preventPaginationOverlay = $preventPaginationOverlay;
-        $this->limit = $limit;
+        $this->limit = $limit < 1 ? null : $limit;
         $this->onBeforeBatch = function () {};
         $this->onAfterBatch = function () {};
     }
@@ -114,11 +114,20 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     public function next(): void
     {
+        $this->iterations++;
         $this->currentKey++;
+
+        if ($this->isLimitReached()) {
+            ($this->onAfterBatch)(array_slice($this->currentArray, 0, $this->currentKey));
+            return;
+        }
+
         if ($this->currentKey == count($this->currentArray)) {
             $this->fsp->incPageNumber();
             ($this->onAfterBatch)($this->currentArray);
-            ($this->onBeforeBatch)();
+            if (!$this->isLimitReached()) {
+                ($this->onBeforeBatch)();
+            }
             $this->fetchNext();
         }
     }
@@ -131,15 +140,11 @@ abstract class ApiFetcherIterator implements Iterator, Countable
 
     public function valid(): bool
     {
-        if ($isValid = isset($this->currentArray[$this->currentKey])) {
-            $this->iterations++;
-        }
-
-        if ($this->limit > 0 && $this->iterations > $this->limit) {
+        if ($this->isLimitReached()) {
             return false;
         }
 
-        return $isValid;
+        return isset($this->currentArray[$this->currentKey]);
     }
 
     public function rewind(): void
@@ -149,6 +154,11 @@ abstract class ApiFetcherIterator implements Iterator, Countable
         $this->identities = [];
         ($this->onBeforeBatch)();
         $this->fetchNext();
+    }
+
+    private function isLimitReached(): bool
+    {
+        return $this->limit > 0 && $this->iterations == $this->limit;
     }
 
     private function fetchNext(): void
