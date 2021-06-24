@@ -75,7 +75,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
     /**
      * Example:
      *
-     * return 'query($pagination: Pagination!, $filters: OrderFilter, $sort: OrderSort) {
+     * return 'query($pagination: Pagination!, $filters: OrderSearchFilter, $sort: OrderSort) {
      *      ordersFetcher(pagination: $pagination, filters: $filters, sort: $sort) ' . ArrayGraphQL::convert($fields) .
      * '}';
      *
