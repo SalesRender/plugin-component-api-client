@@ -8,40 +8,51 @@
 namespace Leadvertex\Plugin\Components\ApiClient;
 
 
+use GuzzleHttp\Client;
 use Leadvertex\Plugin\Components\Guzzle\Guzzle;
-use Softonic\GraphQL\Client;
-use Softonic\GraphQL\ClientBuilder;
 use Softonic\GraphQL\Response;
+use Softonic\GraphQL\ResponseBuilder;
 
 class ApiClient
 {
 
     public static ?string $lockId = null;
 
+    private string $endpoint;
+    private string $token;
     private Client $client;
+    private ResponseBuilder $responseBuilder;
 
     public function __construct(string $endpoint, string $token)
     {
-        $guzzle = Guzzle::getInstance();
+        $this->client = Guzzle::getInstance();
+        $this->endpoint = $endpoint;
+        $this->token = $token;
+        $this->responseBuilder = new ResponseBuilder();
+    }
 
-        $headers = $guzzle->getConfig('headers');
-        $headers['Authorization'] = $token;
+    public function query(string $query, ?array $variables): Response
+    {
+        $headers = $this->client->getConfig('headers');
+        $headers['Authorization'] = $this->token;
 
         if (!empty(self::$lockId)) {
             $headers['X-LOCK-ID'] = self::$lockId;
         }
 
-        $this->client = ClientBuilder::build($endpoint, ['headers' => $headers]);
-    }
+        $options = [
+            'headers' => $headers,
+            'json' => [
+                'query' => $query,
+            ],
+        ];
 
-    public function getClient(): Client
-    {
-        return $this->client;
-    }
+        if (!is_null($variables)) {
+            $options['json']['variables'] = $variables;
+        }
 
-    public function query(string $query, array $variables): Response
-    {
-        return $this->client->query($query, $variables);
+        $response = Guzzle::getInstance()->request('POST', $this->endpoint, $options);
+        return $this->responseBuilder->build($response);
     }
 
 }
