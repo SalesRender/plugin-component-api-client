@@ -16,24 +16,22 @@ use Softonic\GraphQL\Response;
 class ApiClient
 {
 
-    private string $endpoint;
-
-    private string $token;
+    public static ?string $lockId = null;
 
     private Client $client;
 
     public function __construct(string $endpoint, string $token)
     {
-        $this->endpoint = $endpoint;
-        $this->token = $token;
         $guzzle = Guzzle::getInstance();
 
         $headers = $guzzle->getConfig('headers');
-        $this->client = ClientBuilder::build($endpoint, [
-            'headers' => array_merge($headers, [
-                'Authorization' => $token,
-            ]),
-        ]);
+        $headers['Authorization'] = $token;
+
+        if (!empty(self::$lockId)) {
+            $headers['X-LOCK-ID'] = self::$lockId;
+        }
+
+        $this->client = ClientBuilder::build($endpoint, ['headers' => $headers]);
     }
 
     public function getClient(): Client
