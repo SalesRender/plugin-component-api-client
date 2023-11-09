@@ -5,11 +5,11 @@
  * @author Timur Kasumov aka XAKEPEHOK
  */
 
-namespace Leadvertex\Plugin\Components\ApiClient;
+namespace SalesRender\Plugin\Components\ApiClient;
 
 
 use GuzzleHttp\Client;
-use Leadvertex\Plugin\Components\Guzzle\Guzzle;
+use SalesRender\Plugin\Components\Guzzle\Guzzle;
 use Softonic\GraphQL\Response;
 use Softonic\GraphQL\ResponseBuilder;
 

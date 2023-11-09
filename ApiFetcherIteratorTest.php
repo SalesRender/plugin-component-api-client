@@ -5,7 +5,7 @@
  * @author Timur Kasumov (XAKEPEHOK)
  */
 
-namespace Leadvertex\Plugin\Components\ApiClient;
+namespace SalesRender\Plugin\Components\ApiClient;
 
 use Mockery;
 use PHPUnit\Framework\TestCase;

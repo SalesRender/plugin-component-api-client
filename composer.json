@@ -1,23 +1,23 @@
 {
-  "name": "leadvertex/plugin-component-api-client",
-  "description": "LeadVertex plugin API client component",
+  "name": "salesrender/plugin-component-api-client",
+  "description": "SalesRender plugin API client component",
   "type": "library",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
     {
       "name": "Timur Kasumov aka XAKEPEHOK",
-      "email": "support@leadvertex.com"
+      "email": "support@salesrender.com"
     }
   ],
   "autoload": {
     "psr-4": {
-      "Leadvertex\\Plugin\\Components\\ApiClient\\": "src/"
+      "SalesRender\\Plugin\\Components\\ApiClient\\": "src/"
     }
   },
   "require": {
     "php": ">=7.4.0",
-    "leadvertex/plugin-component-guzzle": "^0.3",
+    "salesrender/plugin-component-guzzle": "^0.3",
     "softonic/graphql-client": "^1.2",
     "adbario/php-dot-notation": "^2.2",
     "xakepehok/array-graphql": "^0.0.1"

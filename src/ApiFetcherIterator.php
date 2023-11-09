@@ -5,7 +5,7 @@
  * @author Timur Kasumov aka XAKEPEHOK
  */
 
-namespace Leadvertex\Plugin\Components\ApiClient;
+namespace SalesRender\Plugin\Components\ApiClient;
 
 
 use Adbar\Dot;
