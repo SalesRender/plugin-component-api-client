@@ -15,6 +15,8 @@ use Iterator;
 abstract class ApiFetcherIterator implements Iterator, Countable
 {
 
+    const SORT_LIMIT = 5000;
+
     /** @var callable */
     protected $onBeforeBatch;
 
@@ -197,7 +199,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
             $fsp['filters'] = $this->fsp->getFilters();
         }
 
-        if ($this->fsp->getSort()) {
+        if ($this->fsp->getSort() && $this->count() <= self::SORT_LIMIT) {
             $fsp['sort'] = [
                 'field' => $this->fsp->getSort()->getField(),
                 'direction' => $this->fsp->getSort()->getDirection(),
