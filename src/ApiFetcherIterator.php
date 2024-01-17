@@ -97,7 +97,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
     {
         if (!isset($this->_count)) {
             $query = $this->getQuery(['pageInfo' => ['itemsCount']]);
-            $variables = $this->getVariables(1);
+            $variables = $this->getVariables(1, false);
 
             $response = new Dot($this->client->query($query, $variables)->getData());
             $this->_count = (int) $response->get("{$this->getQueryPath()}.pageInfo.itemsCount");
@@ -186,7 +186,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
         }
     }
 
-    private function getVariables(int $pageNumber): array
+    private function getVariables(int $pageNumber, bool $useSort = true): array
     {
         $fsp = [
             'pagination' => [
@@ -199,7 +199,11 @@ abstract class ApiFetcherIterator implements Iterator, Countable
             $fsp['filters'] = $this->fsp->getFilters();
         }
 
-        if ($this->fsp->getSort() && $this->count() <= self::SORT_LIMIT) {
+        /**
+         * The $useSort arg is needed to prevent recursion when calling the @see self::count() method.
+         * When requesting count [@see self::count()], sorting does not matter.
+         */
+        if ($useSort && $this->fsp->getSort() && $this->count() <= self::SORT_LIMIT) {
             $fsp['sort'] = [
                 'field' => $this->fsp->getSort()->getField(),
                 'direction' => $this->fsp->getSort()->getDirection(),

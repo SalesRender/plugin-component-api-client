@@ -16,7 +16,7 @@
     }
   },
   "require": {
-    "php": ">=7.4.0",
+    "php": "^7.4.0",
     "salesrender/plugin-component-guzzle": "^0.3",
     "softonic/graphql-client": "^1.2",
     "adbario/php-dot-notation": "^2.2",
