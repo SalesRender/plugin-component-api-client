@@ -9,16 +9,14 @@ namespace SalesRender\Plugin\Components\ApiClient;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ServerException;
 use Psr\Http\Message\ResponseInterface;
 use SalesRender\Plugin\Components\Guzzle\Guzzle;
 use Softonic\GraphQL\Response;
 use Softonic\GraphQL\ResponseBuilder;
-use Throwable;
 
 class ApiClient
 {
-    private const MAX_REQUEST_ATTEMPTS = 10;
-    private const ATTEMPTS_DELAY = 10;
     private const REQUEST_TIMEOUT = 60;
 
     public static ?string $lockId = null;
@@ -27,8 +25,10 @@ class ApiClient
     private string $token;
     private Client $client;
     private ResponseBuilder $responseBuilder;
+    private int $maxRequestAttempts;
+    private int $attemptsDelay;
 
-    public function __construct(string $endpoint, string $token)
+    public function __construct(string $endpoint, string $token, int $maxRequestAttempts = 10, int $attemptsDelay = 10)
     {
         $this->client = Guzzle::getInstance([
             'timeout' => self::REQUEST_TIMEOUT,
@@ -36,6 +36,8 @@ class ApiClient
         $this->endpoint = $endpoint;
         $this->token = $token;
         $this->responseBuilder = new ResponseBuilder();
+        $this->maxRequestAttempts = ($maxRequestAttempts <= 0) ? 1 : $maxRequestAttempts;
+        $this->attemptsDelay = ($attemptsDelay < 0) ? 0 : $attemptsDelay;
     }
 
     public function query(string $query, ?array $variables): Response
@@ -70,16 +72,16 @@ class ApiClient
             try {
                 /** @var ResponseInterface $response */
                 $response = $request();
-                if ($response->getStatusCode() === 200) {
+                if ($response->getStatusCode() >= 200 and $response->getStatusCode() < 300) {
                     return $response;
                 }
                 continue;
-            } catch (Throwable $e) {
-                sleep(self::ATTEMPTS_DELAY);
+            } catch (ServerException $e) {
+                sleep($this->attemptsDelay);
             } finally {
                 $attempt++;
             }
-        } while ($attempt < self::MAX_REQUEST_ATTEMPTS);
+        } while ($attempt < $this->maxRequestAttempts);
 
         return $request();
     }
