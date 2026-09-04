@@ -15,7 +15,7 @@ use Iterator;
 abstract class ApiFetcherIterator implements Iterator, Countable
 {
 
-    const SORT_LIMIT = 5000;
+    const int SORT_LIMIT = 5000;
 
     /** @var callable */
     protected $onBeforeBatch;
@@ -53,7 +53,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
      * @param bool $preventPaginationOverlay
      * @param int|null $limit
      */
-    public function __construct(array $fields, ApiClient $client, ApiFilterSortPaginate $fsp, bool $preventPaginationOverlay = true, int $limit = null)
+    public function __construct(array $fields, ApiClient $client, ApiFilterSortPaginate $fsp, bool $preventPaginationOverlay = true, ?int $limit = null)
     {
         $this->fields = $fields;
         $this->client = $client;
@@ -109,7 +109,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
         return min($this->_count, $this->limit);
     }
 
-    public function current()
+    public function current(): mixed
     {
         return $this->currentArray[$this->currentKey];
     }
@@ -134,7 +134,7 @@ abstract class ApiFetcherIterator implements Iterator, Countable
         }
     }
 
-    public function key()
+    public function key(): string
     {
         $data = $this->currentArray[$this->currentKey];
         return $this->getIdentity($data);

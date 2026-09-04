@@ -42,7 +42,7 @@ class ApiClient
 
     public function query(string $query, ?array $variables): Response
     {
-        $headers = $this->client->getConfig('headers');
+        $headers = $this->client->getConfig('headers') ?? [];
         $headers['Authorization'] = $this->token;
 
         if (!empty(self::$lockId)) {

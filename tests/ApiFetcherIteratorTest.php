@@ -40,7 +40,7 @@ class ApiFetcherIteratorTest extends TestCase
         $this->fsp = new ApiFilterSortPaginate([], null, 3);
     }
 
-    public function noLimitDataProvider(): array
+    public static function noLimitDataProvider(): array
     {
         return [
             [null],
@@ -50,9 +50,9 @@ class ApiFetcherIteratorTest extends TestCase
     }
 
     /**
-     * @dataProvider noLimitDataProvider
      * @param int|null $limit
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('noLimitDataProvider')]
     public function testIterate(?int $limit): void
     {
         $result = $this->iterate($this->createIterator($limit));
@@ -126,7 +126,7 @@ class ApiFetcherIteratorTest extends TestCase
         return $result;
     }
 
-    private function createIterator(int $limit = null): ApiFetcherIterator
+    private function createIterator(?int $limit = null): ApiFetcherIterator
     {
         $iterator = new class($this->fields, $this->client, $this->fsp, true, $limit) extends ApiFetcherIterator {
 
